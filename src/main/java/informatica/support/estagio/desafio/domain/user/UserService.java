@@ -25,6 +25,7 @@ public class UserService {
     public UserResponseDto executeFindOne(UUID id) {
         return getUser(id).toDto();
     }
+    @Transactional
     public UserResponseDto executeUpdate(UUID id, UserUpdateDto dto) {
         var user = getUser(id);
         if( dto.email() != null) {
@@ -33,6 +34,7 @@ public class UserService {
         user.updateNameAndEmail(dto);
         return this.userRepository.save(user).toDto();
     }
+    @Transactional
     public void executeRemove(UUID id) {
         var user = getUser(id);
         this.userRepository.delete(user);

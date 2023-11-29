@@ -1,0 +1,62 @@
+package informatica.support.estagio.desafio.domain.products;
+
+import informatica.support.estagio.desafio.domain.products.dto.ProductDto;
+import informatica.support.estagio.desafio.domain.products.dto.UpdateProductDto;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class ProductService {
+    private ProductRepository productRepository;
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+    @Transactional
+    public ProductDto executeCreate(ProductDto dto) {
+        checkProductExists(dto.title(), dto.brand());
+        var product = new Product(dto);
+        return this.productRepository.save(product).toDto();
+    }
+    public List<ProductDto> executeFindAll() {
+        var products = this.productRepository.findAll();
+        return products.stream().map(Product::toDto).toList();
+    }
+    public ProductDto executeFindOne(UUID id) {
+        var product = getProduct(id);
+        return product.toDto();
+    }
+    @Transactional
+    public void executeRemove(UUID id) {
+        var product = getProduct(id);
+        this.productRepository.delete(product);
+    }
+    @Transactional
+    public ProductDto executeUpdate(UUID id, UpdateProductDto dto) {
+        var product = getProduct(id);
+        product.update(dto);
+        checkIfTitleAndBrandExistsInOtherProduct(product.getId(), product.getTitle(), product.getBrand());
+        return this.productRepository.save(product).toDto();
+    }
+    private Product getProduct(UUID id) {
+        var product = this.productRepository.findById(id);
+        if (product.isEmpty()) {
+            throw new RuntimeException("Product not found");
+        }
+        return product.get();
+    }
+    private void checkIfTitleAndBrandExistsInOtherProduct(UUID id, String title, String brand) {
+        var checkProductExists = this.productRepository.findByTitleAndBrandAndIdNot(title, brand, id);
+        if (checkProductExists.isPresent()) {
+            throw new RuntimeException("Other product already have this title and brand.");
+        }
+    }
+    private void checkProductExists(String title, String brand) {
+        var checkProductExists = this.productRepository.findByTitleAndBrand(title, brand);
+        if (checkProductExists.isPresent()) {
+            throw new RuntimeException("Product already exist.");
+        }
+    }
+}
