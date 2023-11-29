@@ -1,9 +1,8 @@
 package informatica.support.estagio.desafio.domain.user;
 
-import informatica.support.estagio.desafio.domain.user.dto.UserRequestDto;
-import informatica.support.estagio.desafio.domain.user.dto.UserResponseDto;
-import informatica.support.estagio.desafio.domain.user.dto.UserUpdateDto;
+import informatica.support.estagio.desafio.domain.user.dto.*;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,14 +11,17 @@ import java.util.UUID;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    public UserService(UserRepository userRepository) {
+    private PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     @Transactional
     public UserResponseDto executeCreate(UserRequestDto dto) {
         checkIfEmailIsAvailable(dto.email());
         checkIfUsernameIsAvailable(dto.username());
         var user = new User(dto);
+        user.setPassword(this.passwordEncoder.encode(dto.password()));
         return this.userRepository.save(user).toDto();
     }
     public UserResponseDto executeFindOne(UUID id) {
@@ -29,7 +31,7 @@ public class UserService {
     public UserResponseDto executeUpdate(UUID id, UserUpdateDto dto) {
         var user = getUser(id);
         if( dto.email() != null) {
-            checkIfEmailIsAvaibleForChange(dto.email(), id);
+            checkIfEmailIsAvailableForChange(dto.email(), id);
         }
         user.updateNameAndEmail(dto);
         return this.userRepository.save(user).toDto();
@@ -58,7 +60,7 @@ public class UserService {
             throw new RuntimeException("Username already in use");
         }
     }
-    private void checkIfEmailIsAvaibleForChange(String email, UUID id) {
+    private void checkIfEmailIsAvailableForChange(String email, UUID id) {
         Optional<User> checkUserExists = this.userRepository.findByEmailAndIdNot(email, id);
         if (checkUserExists.isPresent()) {
             throw new RuntimeException("Email already in use");

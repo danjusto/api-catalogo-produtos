@@ -1,8 +1,6 @@
 package informatica.support.estagio.desafio.domain.user;
 
-import informatica.support.estagio.desafio.domain.user.dto.UserRequestDto;
-import informatica.support.estagio.desafio.domain.user.dto.UserResponseDto;
-import informatica.support.estagio.desafio.domain.user.dto.UserUpdateDto;
+import informatica.support.estagio.desafio.domain.user.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +11,10 @@ import java.util.UUID;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    public UserController(UserService userService) {
+    private final LoginService loginService;
+    public UserController(UserService userService, LoginService loginService) {
         this.userService = userService;
+        this.loginService = loginService;
     }
 
     @PostMapping
@@ -36,5 +36,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remove(@PathVariable UUID id) {
         this.userService.executeRemove(id);
+    }
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.CREATED)
+    public TokenDto login(@RequestBody @Valid LoginDto dto) {
+        return this.loginService.execute(dto);
     }
 }

@@ -1,7 +1,7 @@
-package informatica.support.estagio.desafio.domain.products;
+package informatica.support.estagio.desafio.domain.product;
 
-import informatica.support.estagio.desafio.domain.products.dto.ProductDto;
-import informatica.support.estagio.desafio.domain.products.dto.UpdateProductDto;
+import informatica.support.estagio.desafio.domain.product.dto.ProductDto;
+import informatica.support.estagio.desafio.domain.product.dto.UpdateProductDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

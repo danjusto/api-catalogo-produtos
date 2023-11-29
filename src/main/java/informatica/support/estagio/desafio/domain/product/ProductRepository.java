@@ -1,4 +1,4 @@
-package informatica.support.estagio.desafio.domain.products;
+package informatica.support.estagio.desafio.domain.product;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

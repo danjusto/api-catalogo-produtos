@@ -1,4 +1,4 @@
-package informatica.support.estagio.desafio.domain.products;
+package informatica.support.estagio.desafio.domain.product;
 
 import java.util.HashMap;
 import java.util.Map;

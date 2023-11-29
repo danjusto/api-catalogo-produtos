@@ -1,4 +1,4 @@
-package informatica.support.estagio.desafio.domain.products.dto;
+package informatica.support.estagio.desafio.domain.product.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
