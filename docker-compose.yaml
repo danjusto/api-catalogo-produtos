@@ -1,0 +1,45 @@
+version: '3.5'
+
+services:
+  postgresql:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: db_suppinf
+      PGDATA: /support
+    volumes:
+      - postgresql:/support
+    ports:
+      - '5433:5432'
+    networks:
+      - postgresql
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@root.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - '8081:80'
+    depends_on:
+      - postgresql
+    networks:
+      - postgresql
+
+  redis:
+    container_name: redis_cache
+    image: redis:7.0-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis:/support
+
+networks:
+  postgresql:
+    driver: bridge
+
+volumes:
+  postgresql:
+  redis:
