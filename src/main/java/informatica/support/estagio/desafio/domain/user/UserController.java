@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -18,5 +20,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto create(@RequestBody @Valid UserRequestDto dto) {
         return this.userService.executeCreate(dto);
+    }
+    @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponseDto findOne(@PathVariable UUID id) {
+        return this.userService.executeFindOne(id);
     }
 }
