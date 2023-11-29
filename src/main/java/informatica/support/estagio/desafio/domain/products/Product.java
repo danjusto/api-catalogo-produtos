@@ -22,7 +22,8 @@ public class Product {
     private BigDecimal price;
     private Integer stock;
     private String brand;
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     private String image;
 
     public Product(ProductDto dto) {
@@ -31,11 +32,11 @@ public class Product {
         this.price = dto.price();
         this.stock = dto.stock();
         this.brand = dto.brand();
-        this.category = dto.category();
+        this.category = Category.getCategoryByName(dto.category());
         this.image = dto.image();
     }
     public ProductDto toDto() {
-        return new ProductDto(this.id, this.title, this.description, this.price, this.stock, this.brand, this.category, this.image);
+        return new ProductDto(this.id, this.title, this.description, this.price, this.stock, this.brand, this.category.name(), this.image);
     }
     public void update(UpdateProductDto dto) {
         if (dto.title() != null) {
@@ -54,7 +55,7 @@ public class Product {
             this.brand = dto.brand();
         }
         if (dto.category() != null) {
-            this.category = dto.category();
+            this.category = Category.getCategoryByName(dto.category());
         }
         if (dto.image() != null) {
             this.image = dto.image();

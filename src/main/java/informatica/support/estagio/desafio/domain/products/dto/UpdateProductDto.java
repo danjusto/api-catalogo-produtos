@@ -1,6 +1,7 @@
 package informatica.support.estagio.desafio.domain.products.dto;
 
 import jakarta.validation.constraints.Min;
+
 import java.math.BigDecimal;
 
 public record UpdateProductDto(
