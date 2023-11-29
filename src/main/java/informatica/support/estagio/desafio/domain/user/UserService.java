@@ -33,6 +33,10 @@ public class UserService {
         user.updateNameAndEmail(dto);
         return this.userRepository.save(user).toDto();
     }
+    public void executeRemove(UUID id) {
+        var user = getUser(id);
+        this.userRepository.delete(user);
+    }
     private User getUser(UUID id) {
         var user = this.userRepository.findById(id);
         if (user.isEmpty()) {

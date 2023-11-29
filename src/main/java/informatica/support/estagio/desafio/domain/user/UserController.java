@@ -32,4 +32,9 @@ public class UserController {
     public UserResponseDto update(@PathVariable UUID id, @RequestBody @Valid UserUpdateDto dto) {
         return this.userService.executeUpdate(id, dto);
     }
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remove(@PathVariable UUID id) {
+        this.userService.executeRemove(id);
+    }
 }
