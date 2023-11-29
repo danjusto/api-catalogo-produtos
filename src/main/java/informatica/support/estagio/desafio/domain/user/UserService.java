@@ -2,6 +2,7 @@ package informatica.support.estagio.desafio.domain.user;
 
 import informatica.support.estagio.desafio.domain.user.dto.UserRequestDto;
 import informatica.support.estagio.desafio.domain.user.dto.UserResponseDto;
+import informatica.support.estagio.desafio.domain.user.dto.UserUpdateDto;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,14 @@ public class UserService {
     public UserResponseDto executeFindOne(UUID id) {
         return getUser(id).toDto();
     }
+    public UserResponseDto executeUpdate(UUID id, UserUpdateDto dto) {
+        var user = getUser(id);
+        if( dto.email() != null) {
+            checkIfEmailIsAvaibleForChange(dto.email(), id);
+        }
+        user.updateNameAndEmail(dto);
+        return this.userRepository.save(user).toDto();
+    }
     private User getUser(UUID id) {
         var user = this.userRepository.findById(id);
         if (user.isEmpty()) {
@@ -41,6 +50,12 @@ public class UserService {
         Optional<User> checkUserExists = this.userRepository.findByUsername(username);
         if (checkUserExists.isPresent()) {
             throw new RuntimeException("Username already in use");
+        }
+    }
+    private void checkIfEmailIsAvaibleForChange(String email, UUID id) {
+        Optional<User> checkUserExists = this.userRepository.findByEmailAndIdNot(email, id);
+        if (checkUserExists.isPresent()) {
+            throw new RuntimeException("Email already in use");
         }
     }
 }

@@ -2,6 +2,7 @@ package informatica.support.estagio.desafio.domain.user;
 
 import informatica.support.estagio.desafio.domain.user.dto.UserRequestDto;
 import informatica.support.estagio.desafio.domain.user.dto.UserResponseDto;
+import informatica.support.estagio.desafio.domain.user.dto.UserUpdateDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,5 +30,13 @@ public class User {
     }
     public UserResponseDto toDto() {
         return new UserResponseDto(this.id, this.name, this.username, this.email);
+    }
+    public void updateNameAndEmail(UserUpdateDto dto) {
+        if (dto.name() != null) {
+            this.name = dto.name();
+        }
+        if (dto.email() != null) {
+            this.email = dto.email();
+        }
     }
 }
