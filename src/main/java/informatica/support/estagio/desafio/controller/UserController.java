@@ -1,5 +1,7 @@
-package informatica.support.estagio.desafio.domain.user;
+package informatica.support.estagio.desafio.controller;
 
+import informatica.support.estagio.desafio.domain.user.LoginService;
+import informatica.support.estagio.desafio.domain.user.UserService;
 import informatica.support.estagio.desafio.domain.user.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

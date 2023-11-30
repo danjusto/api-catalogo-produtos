@@ -5,14 +5,19 @@ import informatica.support.estagio.desafio.domain.product.dto.UpdateProductDto;
 import informatica.support.estagio.desafio.infrastructure.exception.AlreadyExistException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@EnableCaching
 public class ProductService {
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -23,10 +28,14 @@ public class ProductService {
         var product = new Product(dto);
         return this.productRepository.save(product).toDto();
     }
-    public List<ProductDto> executeFindAll() {
-        var products = this.productRepository.findAll();
-        return products.stream().map(Product::toDto).toList();
+    @Cacheable("products")
+    public List<ProductDto> executeFindAll(String category, Pageable pageable) {
+        /*if (category != null) {
+            return this.productRepository.findAllByCategory(Category.getCategoryByName(category), pageable).map(Product::toDto);
+        }*/
+        return this.productRepository.findAll().stream().map(Product::toDto).toList();
     }
+    @Cacheable("product")
     public ProductDto executeFindOne(UUID id) {
         var product = getProduct(id);
         return product.toDto();
