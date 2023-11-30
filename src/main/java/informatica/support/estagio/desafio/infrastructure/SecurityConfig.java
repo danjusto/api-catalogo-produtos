@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @EnableWebSecurity
@@ -23,7 +24,7 @@ public class SecurityConfig {
         this.authFilter = authFilter;
     }
     @Bean
-    public SecurityFilterChain confire(HttpSecurity http) throws Exception {
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()
@@ -40,7 +41,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         try {
             return authConfig.getAuthenticationManager();
         } catch (Exception e) {

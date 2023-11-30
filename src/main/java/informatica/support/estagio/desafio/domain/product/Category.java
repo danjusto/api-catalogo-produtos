@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Category {
-    SMARTPHONE("smartphone"),
-    LAPTOP("laptop");
+    SMARTPHONES("smartphones"),
+    LAPTOPS("laptops");
     private final String name;
     public static final Map<String, Category> mapOfCategories = new HashMap<>();
     static {

@@ -1,5 +1,6 @@
 package informatica.support.estagio.desafio.infrastructure.authentication;
 
+import informatica.support.estagio.desafio.infrastructure.exception.AuthException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -24,17 +25,25 @@ public class JwtService {
                 .compact();
     }
     public String getSubject(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(jwtSecret)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(jwtSecret)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {
+            throw new AuthException("Invalid token");
+        }
     }
     public Boolean validateToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(jwtSecret)
-                .build()
-                .isSigned(token);
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(jwtSecret)
+                    .build()
+                    .isSigned(token);
+        } catch (Exception e) {
+            throw new AuthException("Invalid token");
+        }
     }
 }

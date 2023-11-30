@@ -25,6 +25,7 @@ public class UserController {
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserResponseDto findOne(@PathVariable UUID id) {
+
         return this.userService.executeFindOne(id);
     }
     @PutMapping("{id}")

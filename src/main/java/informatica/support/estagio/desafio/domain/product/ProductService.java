@@ -2,6 +2,8 @@ package informatica.support.estagio.desafio.domain.product;
 
 import informatica.support.estagio.desafio.domain.product.dto.ProductDto;
 import informatica.support.estagio.desafio.domain.product.dto.UpdateProductDto;
+import informatica.support.estagio.desafio.infrastructure.exception.AlreadyExistException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -47,20 +49,20 @@ public class ProductService {
     private Product getProduct(UUID id) {
         var product = this.productRepository.findById(id);
         if (product.isEmpty()) {
-            throw new RuntimeException("Product not found");
+            throw new EntityNotFoundException("Product not found");
         }
         return product.get();
     }
     private void checkIfTitleAndBrandExistsInOtherProduct(UUID id, String title, String brand) {
         var checkProductExists = this.productRepository.findByTitleAndBrandAndIdNot(title, brand, id);
         if (checkProductExists.isPresent()) {
-            throw new RuntimeException("Other product already have this title and brand.");
+            throw new AlreadyExistException("Other product already have this title and brand.");
         }
     }
     private void checkProductExists(String title, String brand) {
         var checkProductExists = this.productRepository.findByTitleAndBrand(title, brand);
         if (checkProductExists.isPresent()) {
-            throw new RuntimeException("Product already exist.");
+            throw new AlreadyExistException("Product already exist.");
         }
     }
     private void checkValidCategory(String category) {

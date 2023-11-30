@@ -1,6 +1,8 @@
 package informatica.support.estagio.desafio.domain.user;
 
 import informatica.support.estagio.desafio.domain.user.dto.*;
+import informatica.support.estagio.desafio.infrastructure.exception.AlreadyExistException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,7 @@ import java.util.UUID;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -44,26 +46,26 @@ public class UserService {
     private User getUser(UUID id) {
         var user = this.userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new RuntimeException("User not found");
+            throw new EntityNotFoundException("User not found");
         }
         return user.get();
     }
     private void checkIfEmailIsAvailable(String email) {
         Optional<User> checkUserExists = this.userRepository.findByEmail(email);
         if (checkUserExists.isPresent()) {
-            throw new RuntimeException("Email already in use");
+            throw new AlreadyExistException("Email already in use");
         }
     }
     private void checkIfUsernameIsAvailable(String username) {
         Optional<User> checkUserExists = this.userRepository.findByUsername(username);
         if (checkUserExists.isPresent()) {
-            throw new RuntimeException("Username already in use");
+            throw new AlreadyExistException("Username already in use");
         }
     }
     private void checkIfEmailIsAvailableForChange(String email, UUID id) {
         Optional<User> checkUserExists = this.userRepository.findByEmailAndIdNot(email, id);
         if (checkUserExists.isPresent()) {
-            throw new RuntimeException("Email already in use");
+            throw new AlreadyExistException("Email already in use");
         }
     }
 }
