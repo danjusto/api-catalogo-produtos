@@ -3,12 +3,11 @@ package informatica.support.estagio.desafio.domain.product;
 import informatica.support.estagio.desafio.domain.product.dto.ProductDto;
 import informatica.support.estagio.desafio.domain.product.dto.UpdateProductDto;
 import informatica.support.estagio.desafio.infrastructure.exception.AlreadyExistException;
+import informatica.support.estagio.desafio.infrastructure.exception.InvalidParamException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,10 +28,10 @@ public class ProductService {
         return this.productRepository.save(product).toDto();
     }
     @Cacheable("products")
-    public List<ProductDto> executeFindAll(String category, Pageable pageable) {
-        /*if (category != null) {
-            return this.productRepository.findAllByCategory(Category.getCategoryByName(category), pageable).map(Product::toDto);
-        }*/
+    public List<ProductDto> executeFindAll(String category) {
+        if (category != null) {
+            return this.productRepository.findByCategoryUsingLike("%" + category + "%").stream().map(Product::toDto).toList();
+        }
         return this.productRepository.findAll().stream().map(Product::toDto).toList();
     }
     @Cacheable("product")
@@ -65,19 +64,19 @@ public class ProductService {
     private void checkIfTitleAndBrandExistsInOtherProduct(UUID id, String title, String brand) {
         var checkProductExists = this.productRepository.findByTitleAndBrandAndIdNot(title, brand, id);
         if (checkProductExists.isPresent()) {
-            throw new AlreadyExistException("Other product already have this title and brand.");
+            throw new AlreadyExistException("Other product already have this title and brand");
         }
     }
     private void checkProductExists(String title, String brand) {
         var checkProductExists = this.productRepository.findByTitleAndBrand(title, brand);
         if (checkProductExists.isPresent()) {
-            throw new AlreadyExistException("Product already exist.");
+            throw new AlreadyExistException("Product already exist");
         }
     }
     private void checkValidCategory(String category) {
         var checkCategory = Category.mapOfCategories.containsKey(category);
         if (checkCategory == Boolean.FALSE) {
-            throw new RuntimeException("Invalid category. Categories available: 'smartphone', 'laptop'");
+            throw new InvalidParamException("Invalid category. Categories available: 'smartphones', 'laptops'");
         }
     }
 }

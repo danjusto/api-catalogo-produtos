@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,25 +27,25 @@ public class UserService {
         user.setPassword(this.passwordEncoder.encode(dto.password()));
         return this.userRepository.save(user).toDto();
     }
-    public UserResponseDto executeFindOne(UUID id) {
-        return getUser(id).toDto();
+    public UserResponseDto executeFindOne(Principal principal) {
+        return getUserByUsername(principal.getName()).toDto();
     }
     @Transactional
-    public UserResponseDto executeUpdate(UUID id, UserUpdateDto dto) {
-        var user = getUser(id);
+    public UserResponseDto executeUpdate(Principal principal, UserUpdateDto dto) {
+        var user = getUserByUsername(principal.getName());
         if( dto.email() != null) {
-            checkIfEmailIsAvailableForChange(dto.email(), id);
+            checkIfEmailIsAvailableForChange(dto.email(), user.getId());
         }
         user.updateNameAndEmail(dto);
         return this.userRepository.save(user).toDto();
     }
     @Transactional
-    public void executeRemove(UUID id) {
-        var user = getUser(id);
+    public void executeRemove(Principal principal) {
+        var user = getUserByUsername(principal.getName());
         this.userRepository.delete(user);
     }
-    private User getUser(UUID id) {
-        var user = this.userRepository.findById(id);
+    private User getUserByUsername(String username) {
+        var user = this.userRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new EntityNotFoundException("User not found");
         }

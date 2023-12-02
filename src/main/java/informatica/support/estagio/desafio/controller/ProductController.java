@@ -3,10 +3,6 @@ package informatica.support.estagio.desafio.controller;
 import informatica.support.estagio.desafio.domain.product.ProductService;
 import informatica.support.estagio.desafio.domain.product.dto.ProductDto;
 import informatica.support.estagio.desafio.domain.product.dto.UpdateProductDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +12,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
-    private ProductService productService;
+    private final ProductService productService;
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
@@ -28,8 +24,8 @@ public class ProductController {
     }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductDto> findAll(@RequestParam(required = false) String category, @PageableDefault(size=10, sort={"title"}) Pageable pageable) {
-        return this.productService.executeFindAll(category, pageable);
+    public List<ProductDto> findAll(@RequestParam(required = false) String category) {
+        return this.productService.executeFindAll(category);
     }
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)

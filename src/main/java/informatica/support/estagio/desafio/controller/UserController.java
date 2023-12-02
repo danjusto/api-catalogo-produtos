@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -24,21 +25,20 @@ public class UserController {
     public UserResponseDto create(@RequestBody @Valid UserRequestDto dto) {
         return this.userService.executeCreate(dto);
     }
-    @GetMapping("{id}")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public UserResponseDto findOne(@PathVariable UUID id) {
-
-        return this.userService.executeFindOne(id);
+    public UserResponseDto findOne(Principal principal) {
+        return this.userService.executeFindOne(principal);
     }
-    @PutMapping("{id}")
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public UserResponseDto update(@PathVariable UUID id, @RequestBody @Valid UserUpdateDto dto) {
-        return this.userService.executeUpdate(id, dto);
+    public UserResponseDto update(Principal principal, @RequestBody @Valid UserUpdateDto dto) {
+        return this.userService.executeUpdate(principal, dto);
     }
-    @DeleteMapping("{id}")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remove(@PathVariable UUID id) {
-        this.userService.executeRemove(id);
+    public void remove(Principal principal) {
+        this.userService.executeRemove(principal);
     }
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.CREATED)
