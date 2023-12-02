@@ -36,7 +36,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAllUncaughException(AlreadyExistException ex) {
+    public ResponseEntity<Object> handleAllUncaughException(Exception ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDto(HttpStatus.BAD_REQUEST, ex.getMessage(), LocalDateTime.now().format(formatter)));
     }
     @ExceptionHandler(AlreadyExistException.class)
@@ -49,7 +49,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Object> handleAuthException(AuthenticationException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ExceptionDto(HttpStatus.UNAUTHORIZED, "Authentication failed", LocalDateTime.now().format(formatter)));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ExceptionDto(HttpStatus.UNAUTHORIZED, ex.getMessage(), LocalDateTime.now().format(formatter)));
     }
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException ex) {
